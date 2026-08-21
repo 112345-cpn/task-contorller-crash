@@ -15,8 +15,9 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - [x] 完成按编号触发的 jtreg 测试程序
 - [x] 完成 release 版本构建
 - [x] 在 release JDK 上完成 1 到 5 的自动测试
-- [ ] 完成 fastdebug 版本构建
-- [ ] 保存五种崩溃的完整日志样本
+- [x] 完成 fastdebug 版本构建
+- [x] 在 fastdebug JDK 上完成 1 到 5 的自动测试
+- [x] 在本地保存五种崩溃的完整日志样本
 - [ ] 开始日志解析和已知 Bug 检索
 
 本次 release 构建结果：
@@ -61,5 +62,7 @@ make CONF=linux-x86_64-release test \
 这个测试会分别启动子 JVM。这样一个子 JVM 崩溃后，剩余编号仍然可以继续测试。
 
 本次 release 测试结果为 `PASS 1、FAIL 0、ERROR 0`。一个测试文件内部已经依次检查了 1 到 5。
+
+fastdebug 构建和相同的自动测试也已经完成，结果同样为 `PASS 1、FAIL 0、ERROR 0`。五份原始 `hs_err` 日志保存在本地实验环境中；日志带有主机名和环境变量，因此没有直接提交到公开仓库。
 
 代码来自 OpenJDK/Tencent Kona 源码树，对应源文件保留原有许可证和版权声明。

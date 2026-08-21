@@ -48,8 +48,52 @@ TEST SUCCESS
 
 `ControlledCrash.java` 内部循环执行编号 1 到 5。每次都检查子 JVM 不是正常退出、错误日志确实存在，并且日志中包含 `VM_ControlledCrash`。测试文件最终通过，说明五个编号都完成了这些检查。
 
+## fastdebug 构建和测试
+
+fastdebug 构建产物位于：
+
+```text
+~/TencentKona-25-master/build/linux-x86_64-fastdebug/images/jdk
+```
+
+最初在链接 `libjvm.so` 时，Linux 使用 signal 9 结束了 `ld`。系统日志同时记录了 OOM kill，可以确定是 WSL 内存不足，而不是源码编译错误。当时 WSL 只有 2 GB 内存和 1 GB swap。将其调整为 8 GB 内存和 8 GB swap 后，继续运行原来的 `make` 命令，fastdebug 构建完成。
+
+fastdebug 版本信息：
+
+```text
+openjdk version "25.0.4-internal" 2026-07-21
+OpenJDK Runtime Environment (fastdebug build 25.0.4-internal-adhoc.test.TencentKona-25-master)
+OpenJDK 64-Bit Server VM (fastdebug build 25.0.4-internal-adhoc.test.TencentKona-25-master, mixed mode, sharing)
+```
+
+随后运行同一个 jtreg 测试，结果为：
+
+```text
+PASS: 1
+FAIL: 0
+ERROR: 0
+SKIP: 0
+TEST SUCCESS
+```
+
+## 崩溃日志样本
+
+使用 fastdebug JDK 分别触发编号 1 到 5，已经在本地保存五份完整日志：
+
+```text
+~/TencentKona-25-master/crash-logs/fastdebug/controlled-crash-1.log
+~/TencentKona-25-master/crash-logs/fastdebug/controlled-crash-2.log
+~/TencentKona-25-master/crash-logs/fastdebug/controlled-crash-3.log
+~/TencentKona-25-master/crash-logs/fastdebug/controlled-crash-4.log
+~/TencentKona-25-master/crash-logs/fastdebug/controlled-crash-5.log
+```
+
+初步核对结果：编号 1 和 2 的日志以 `Internal Error` 开头，编号 3 是 native OOM，编号 4 是 `SIGSEGV`，编号 5 是 `SIGFPE`。五份日志都能关联到 `VM_ControlledCrash`。
+
+原始日志包含主机名、用户目录和环境变量，目前不直接提交到公开仓库。后续可以提交去除本机信息后的样本或解析结果。
+
 ## 尚未完成
 
-目前还没有把五种完整错误日志样本整理进仓库，也没有完成 fastdebug 构建。
+还没有完成 HotSpot Error Log 解析程序、Java Bug System 已知问题检索、解决建议、Agent Skill 和 MCP server。
 
-下一步整理日志样本，再开始 HotSpot Error Log 字段解析。
+下一步先实现日志字段解析，输出错误类型、当前线程、Problematic frame、VM operation 和 native 调用栈摘要。

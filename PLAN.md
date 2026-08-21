@@ -16,11 +16,11 @@
 
 分别构建 release 和 fastdebug。两套构建使用不同目录，方便比较错误日志里的调试信息。
 
-release 已经构建完成。下一步是 fastdebug。
+release 和 fastdebug 均已构建完成，并通过相同的 controlledCrash 自动测试。
 
 ## 3. 保存测试日志
 
-每个编号单独运行一次，保存对应的 `hs_err_pid*.log`。记录以下信息：
+每个编号已经单独运行并保存对应的 HotSpot Error Log。下一步从日志中提取以下信息：
 
 - JVM 版本
 - 崩溃编号
