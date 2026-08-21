@@ -1,4 +1,8 @@
-# 阶段报告
+# 任务 1.1 阶段报告
+
+## 完成情况
+
+本阶段完成了 WhiteBox `controlledCrash(int)` 接口、五种受控崩溃实现、jtreg 测试程序，以及 Kona JDK 25 的 release 和 fastdebug 构建。两种构建上的自动测试均通过，五份 fastdebug 崩溃日志也已生成。任务 1.1 已完成，下一步开始任务 1.2 的日志解析。
 
 ## 实现内容
 
@@ -6,13 +10,13 @@ WhiteBox 增加了 `controlledCrash(int)`。Java 侧传入编号，native 入口
 
 这样处理的主要原因是让错误日志记录当前 VM operation。后续看到 `VM_ControlledCrash` 时，可以确认这是测试主动触发的故障，而不是运行过程中随机出现的问题。
 
-| 编号 | 触发方式 | 预期现象 |
+| 编号 | 触发方式 | 实际日志结果 |
 | --- | --- | --- |
-| 1 | `fatal` | HotSpot 主动报告致命错误 |
-| 2 | `guarantee(false, ...)` | guarantee 检查失败 |
-| 3 | `vm_exit_out_of_memory` | native OOM 报告 |
-| 4 | 写入非法地址 | Linux 上通常为 SIGSEGV |
-| 5 | 整数除零 | Linux 上通常为 SIGFPE |
+| 1 | `fatal` | `Internal Error` |
+| 2 | `guarantee(false, ...)` | `Internal Error` |
+| 3 | `vm_exit_out_of_memory` | `Out of Memory Error` |
+| 4 | 写入非法地址 | `SIGSEGV` |
+| 5 | 整数除零 | `SIGFPE` |
 
 输入不在 1 到 5 时抛出 `IllegalArgumentException`，不会执行崩溃。
 
@@ -91,6 +95,10 @@ TEST SUCCESS
 初步核对结果：编号 1 和 2 的日志以 `Internal Error` 开头，编号 3 是 native OOM，编号 4 是 `SIGSEGV`，编号 5 是 `SIGFPE`。五份日志都能关联到 `VM_ControlledCrash`。
 
 原始日志包含主机名、用户目录和环境变量，目前不直接提交到公开仓库。后续可以提交去除本机信息后的样本或解析结果。
+
+## 阶段结论
+
+任务 1.1 的接口、实现、构建和测试均已完成。release 与 fastdebug 测试结果一致，五种崩溃都能稳定复现并在日志中标记 `VM_ControlledCrash`，可以作为后续日志解析和原因分析的输入。
 
 ## 尚未完成
 

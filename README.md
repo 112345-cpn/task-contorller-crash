@@ -8,6 +8,8 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 
 `type` 取值为 1 到 5，分别触发 fatal、guarantee 失败、native OOM、非法地址访问和整数除零。每次崩溃都应生成 HotSpot Error Log，后续用这些日志做原因分析。
 
+任务 1.1 已完成：release 和 fastdebug 两种 JDK 均构建成功，五种受控崩溃在两种构建上都通过了 jtreg 自动测试。目前开始任务 1.2 的日志解析工作。
+
 ## 当前进度
 
 - [x] 完成 WhiteBox Java 接口
@@ -18,9 +20,9 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - [x] 完成 fastdebug 版本构建
 - [x] 在 fastdebug JDK 上完成 1 到 5 的自动测试
 - [x] 在本地保存五种崩溃的完整日志样本
-- [ ] 开始日志解析和已知 Bug 检索
+- [ ] 实现日志解析和已知 Bug 检索
 
-本次 release 构建结果：
+本次构建基于 Kona JDK 25，release 版本信息为：
 
 ```text
 openjdk version "25.0.4-internal" 2026-07-21
