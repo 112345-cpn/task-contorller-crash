@@ -33,6 +33,7 @@ OpenJDK 64-Bit Server VM (build 25.0.4-internal-adhoc.test.TencentKona-25-master
 ## 仓库内容
 
 - `controlled-crash.patch`：受控崩溃核心代码，可应用到 Kona 25 源码树。
+- `code/`：本次修改涉及的四个完整源码文件，按 Kona 源码路径保存。
 - `PLAN.md`：任务安排。
 - `REPORT.md`：目前的实现和构建记录。
 - `docs/BUILD.md`：release 和 fastdebug 构建命令。
@@ -51,6 +52,8 @@ git am /path/to/task-contorller-crash/controlled-crash.patch
 - `src/hotspot/share/runtime/vmOperation.hpp`
 - `test/lib/jdk/test/whitebox/WhiteBox.java`
 - `test/hotspot/jtreg/runtime/ErrorHandling/ControlledCrash.java`
+
+对应的完整源码文件见 `code/` 目录；根目录的 `controlled-crash.patch` 用于在另一份 Kona 源码树中重放修改。
 
 ## 测试入口
 
