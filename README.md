@@ -22,6 +22,19 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - [x] 在本地保存五种崩溃的完整日志样本
 - [x] 实现第一版日志解析并完成五份样本的直接原因初步分析
 - [ ] 关联 Java Bug System 已知问题并给出建议
+- [ ] 创建 Agent Skill
+- [ ] 创建 MCP server
+
+## 任务 1.2 对照
+
+| 导师要求 | 当前状态 | 对应材料 |
+| --- | --- | --- |
+| 解析 HotSpot Error Log | 已完成第一版 | `tools/parse_hs_err.py`、`analysis/fastdebug-summary.json` |
+| 分析崩溃的直接原因 | 已完成五份受控样本的初步分析 | `analysis/REPORT.md` |
+| 关联 Java Bug System 中的已知问题 | 尚未开始 | 下一步工作 |
+| 给出解决方案或建议 | 尚未开始 | 等已知问题检索完成后补充 |
+| 创建 Agent Skill | 尚未开始 | 后续实现 |
+| 创建 MCP server | 尚未开始 | 后续实现 |
 
 本次构建基于 Kona JDK 25，release 版本信息为：
 

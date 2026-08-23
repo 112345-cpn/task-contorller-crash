@@ -104,6 +104,17 @@ TEST SUCCESS
 
 第一版解析器已经放在 `tools/parse_hs_err.py`，并用两个单元测试覆盖 `Internal Error` 和信号日志。五份 fastdebug 样本的去环境化 JSON 摘要和直接原因分析见 `analysis/`。
 
+对照任务要求：
+
+| 要求 | 状态 |
+| --- | --- |
+| 解析 HotSpot Error Log | 已完成第一版 |
+| 分析崩溃的直接原因 | 已完成五份受控样本的初步分析 |
+| 关联 Java Bug System 已知问题 | 尚未开始 |
+| 给出解决方案或建议 | 尚未开始 |
+| 创建 Agent Skill | 尚未开始 |
+| 创建 MCP server | 尚未开始 |
+
 ## 尚未完成
 
 还没有完成 Java Bug System 已知问题检索、解决建议、Agent Skill 和 MCP server。

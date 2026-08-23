@@ -38,11 +38,11 @@ release 和 fastdebug 均已构建完成，并通过相同的 controlledCrash �
 
 ## 第五阶段：已知问题和解决建议（未开始）
 
-使用解析结果生成检索关键词，关联 Java Bug System 中的已知问题，并给出解决方案或排查建议。
+使用解析结果生成检索关键词，关联 Java Bug System 中的已知问题，并给出解决方案或排查建议。需要明确区分“本实验主动制造的崩溃”和 Java Bug System 中真实缺陷的复现。
 
 ## 第六阶段：Agent Skill 和 MCP server（未开始）
 
-日志解析和分析流程稳定后，再封装 Agent Skill 和 MCP server。
+日志解析和分析流程稳定后，再封装 Agent Skill 和 MCP server。Agent Skill 负责规定分析流程；MCP server 负责提供日志读取、解析和 Bug 检索工具。
 
 ## 最终交付
 
