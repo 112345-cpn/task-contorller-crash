@@ -24,7 +24,7 @@ release 和 fastdebug 均已构建完成，并通过相同的 controlledCrash �
 
 ## 第四阶段：日志解析（进行中）
 
-第一版解析程序提取以下信息：
+第一版解析程序已经完成，提取以下信息：
 
 - JVM 版本
 - 崩溃编号
@@ -34,7 +34,7 @@ release 和 fastdebug 均已构建完成，并通过相同的 controlledCrash �
 - VM operation
 - native 调用栈
 
-字段提取完成后，再分析崩溃的直接原因。
+五份 fastdebug 样本的直接原因已经完成初步分析。字段提取和原因判断仍需要增加更多普通 HotSpot Error Log 样本进行验证。
 
 ## 第五阶段：已知问题和解决建议（未开始）
 

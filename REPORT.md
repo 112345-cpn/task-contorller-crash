@@ -100,8 +100,12 @@ TEST SUCCESS
 
 任务 1.1 的接口、实现、构建和测试均已完成。release 与 fastdebug 测试结果一致，五种崩溃都能稳定复现并在日志中标记 `VM_ControlledCrash`，可以作为后续日志解析和原因分析的输入。
 
+## 任务 1.2 当前进度
+
+第一版解析器已经放在 `tools/parse_hs_err.py`，并用两个单元测试覆盖 `Internal Error` 和信号日志。五份 fastdebug 样本的去环境化 JSON 摘要和直接原因分析见 `analysis/`。
+
 ## 尚未完成
 
-还没有完成 HotSpot Error Log 解析程序、Java Bug System 已知问题检索、解决建议、Agent Skill 和 MCP server。
+还没有完成 Java Bug System 已知问题检索、解决建议、Agent Skill 和 MCP server。
 
-下一步先实现日志字段解析，输出错误类型、当前线程、Problematic frame、VM operation 和 native 调用栈摘要。
+下一步根据解析出的错误类型、源码位置和 native 栈关键词检索已知问题。

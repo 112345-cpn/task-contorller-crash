@@ -20,7 +20,8 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - [x] 完成 fastdebug 版本构建
 - [x] 在 fastdebug JDK 上完成 1 到 5 的自动测试
 - [x] 在本地保存五种崩溃的完整日志样本
-- [ ] 实现日志解析和已知 Bug 检索
+- [x] 实现第一版日志解析并完成五份样本的直接原因初步分析
+- [ ] 关联 Java Bug System 已知问题并给出建议
 
 本次构建基于 Kona JDK 25，release 版本信息为：
 
@@ -37,6 +38,9 @@ OpenJDK 64-Bit Server VM (build 25.0.4-internal-adhoc.test.TencentKona-25-master
 - `PLAN.md`：任务安排。
 - `REPORT.md`：目前的实现和构建记录。
 - `docs/BUILD.md`：release 和 fastdebug 构建命令。
+- `tools/parse_hs_err.py`：HotSpot Error Log 字段解析器。
+- `tools/test_parse_hs_err.py`：解析器单元测试。
+- `analysis/`：去环境化解析结果和初步分析报告。
 
 ## 应用补丁
 

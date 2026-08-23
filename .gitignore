@@ -1,3 +1,4 @@
 *.log
 hs_err_pid*.log
 build/
+__pycache__/
