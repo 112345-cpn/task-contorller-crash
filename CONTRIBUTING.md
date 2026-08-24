@@ -5,7 +5,7 @@
 - `task-controlled-crash`：规划、构建记录、报告、Error Log 解析器和脱敏分析样本。
 - [TencentKona-25/task](https://github.com/112345-cpn/TencentKona-25/tree/task)：JDK 源码和 jtreg 测试修改。
 
-修改 HotSpot 或 jtreg 源码时，先在 Kona fork 的任务分支中提交；修改报告、解析器或项目说明时，在本仓库建立分支并提交。
+修改 HotSpot 或 jtreg 源码时，先在 Kona fork 的任务分支中提交；修改报告、解析器或项目说明时，直接提交到本仓库的 `main` 分支（较大改动可先建立分支）。
 
 ## 本地测试
 

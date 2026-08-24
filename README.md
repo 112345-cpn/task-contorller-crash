@@ -8,7 +8,7 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 
 `type` 取值为 1 到 5，分别触发 fatal、guarantee 失败、native OOM、非法地址访问和整数除零。每次崩溃都应生成 HotSpot Error Log，后续用这些日志做原因分析。
 
-任务 1.1 已完成：release 和 fastdebug 两种 JDK 均构建成功，五种受控崩溃在两种构建上都通过了 jtreg 自动测试。目前开始任务 1.2 的日志解析工作。
+任务 1.1 已完成：release 和 fastdebug 两种 JDK 均构建成功，五种受控崩溃在两种构建上都通过了 jtreg 自动测试。任务 1.2 的第一版日志解析和直接原因分析也已完成。
 
 说明：构建和测试结果记录在 `REPORT.md`；当前 JDK 源码修改请以 Kona fork 的 `task` 分支为准。
 
@@ -66,14 +66,6 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 | 创建 Agent Skill | 尚未开始 | 后续实现 |
 | 创建 MCP server | 尚未开始 | 后续实现 |
 
-本次构建基于 Kona JDK 25，release 版本信息为：
-
-```text
-openjdk version "25.0.4-internal" 2026-07-21
-OpenJDK Runtime Environment (build 25.0.4-internal-adhoc.test.TencentKona-25-master)
-OpenJDK 64-Bit Server VM (build 25.0.4-internal-adhoc.test.TencentKona-25-master, mixed mode, sharing)
-```
-
 ## 仓库内容
 
 - `PLAN.md`：任务安排。
@@ -85,17 +77,6 @@ OpenJDK 64-Bit Server VM (build 25.0.4-internal-adhoc.test.TencentKona-25-master
 
 ## 测试入口
 
-构建完成后，在 Kona 源码目录运行：
-
-```bash
-make CONF=linux-x86_64-release test \
-  TEST="jtreg:test/hotspot/jtreg/runtime/ErrorHandling/ControlledCrash.java"
-```
-
-这个测试会分别启动子 JVM。这样一个子 JVM 崩溃后，剩余编号仍然可以继续测试。
-
-本次 release 测试结果为 `PASS 1、FAIL 0、ERROR 0`。一个测试文件内部已经依次检查了 1 到 5。
-
-fastdebug 构建和相同的自动测试也已经完成，结果同样为 `PASS 1、FAIL 0、ERROR 0`。五份原始 `hs_err` 日志保存在本地实验环境中；日志带有主机名和环境变量，因此没有直接提交到公开仓库。
+JDK 构建和 jtreg 测试命令见 [docs/BUILD.md](docs/BUILD.md)，release 与 fastdebug 的测试结果见 [REPORT.md](REPORT.md)。
 
 代码来自 OpenJDK/Tencent Kona 源码树，对应源文件保留原有许可证和版权声明。
