@@ -16,3 +16,5 @@ jobs:
           python-version: '3.12'
       - run: python -m unittest tools.test_parse_hs_err
       - run: python tools/parse_hs_err.py analysis/fixtures/controlled-crash-3.log > /tmp/controlled-crash-3.json
+      - name: Verify parsed crash type 3 result
+        run: python -c "import json; d=json.load(open('/tmp/controlled-crash-3.json'))[0]; assert d['crash_type']==3 and d['error_kind']=='Out of Memory Error' and 'native OOM' in d['direct_cause'] and d['error_reporting_frames'], d"
