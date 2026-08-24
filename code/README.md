@@ -9,4 +9,5 @@
 | `test/lib/jdk/test/whitebox/WhiteBox.java` | `test/lib/jdk/test/whitebox/WhiteBox.java` | 声明 Java 侧 `controlledCrash(int)` native 方法 |
 | `test/hotspot/jtreg/runtime/ErrorHandling/ControlledCrash.java` | `test/hotspot/jtreg/runtime/ErrorHandling/ControlledCrash.java` | 启动五个子 JVM，检查崩溃日志是否生成并包含 `VM_ControlledCrash` |
 
-这些文件是从已经通过 release 和 fastdebug 测试的 Kona 源码树中复制的完整文件。完整修改可以通过仓库根目录的 `controlled-crash.patch` 应用到另一份 Kona 源码树。
+这些文件是从已经通过 release 和 fastdebug 测试的 Kona 源码树中复制的源码备份。正式修改已经直接提交到
+[TencentKona-25 的 task 分支](https://github.com/112345-cpn/TencentKona-25/tree/task)，这里的文件不作为独立交付入口。

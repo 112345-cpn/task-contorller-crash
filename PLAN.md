@@ -46,9 +46,12 @@ release 和 fastdebug 均已构建完成，并通过相同的 controlledCrash �
 
 ## 最终交付
 
-- WhiteBox 修改补丁
+- Kona fork 的 `task` 分支中的 WhiteBox 源码修改
 - 构建说明
 - 五种崩溃日志样本
 - 日志分析报告
 - 日志解析工具
 - Agent Skill 和 MCP server 的初版
+
+说明：根目录的 `controlled-crash.patch` 和 `code/` 目录是实验过程中的备份材料，正式源码以
+[TencentKona-25/task](https://github.com/112345-cpn/TencentKona-25/tree/task) 为准。

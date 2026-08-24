@@ -30,6 +30,14 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 
 查看或复现源码修改时，以 fork 仓库的 `task` 分支为准；本仓库中的 `code/` 和补丁文件只是实验过程中的辅助备份。
 
+## 建议查看顺序
+
+1. 先看本文，了解两个仓库的分工和源码入口。
+2. 再看 `PLAN.md`，了解任务安排和完成情况。
+3. 查看 `REPORT.md`，了解构建、测试和 1.1 阶段结果。
+4. 在 Kona fork 的 `task` 分支中查看实际源码修改。
+5. 最后查看 `tools/` 和 `analysis/`，了解 Error Log 解析部分。
+
 ## 当前进度
 
 - [x] 完成 WhiteBox Java 接口
