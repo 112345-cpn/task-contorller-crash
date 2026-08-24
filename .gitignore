@@ -2,3 +2,5 @@
 hs_err_pid*.log
 build/
 __pycache__/
+!analysis/fixtures/
+!analysis/fixtures/*.log

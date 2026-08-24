@@ -2,7 +2,7 @@
 
 ## 分析范围
 
-本报告分析的是 fastdebug JDK 生成的五份 `controlledCrash` 日志。解析器提取日志中明确出现的字段，结果见 `fastdebug-summary.json`。没有把主机名、用户目录和环境变量放进摘要。
+本报告分析的是 fastdebug JDK 生成的五份 `controlledCrash` 日志。解析器提取日志中明确出现的字段，结果见 `fastdebug-summary.json`。没有把主机名、用户目录和环境变量放进摘要。仓库另提供一份脱敏最小样本 `fixtures/controlled-crash-3.log`，用于复现 type 3 的栈分类。
 
 ## 结果
 
@@ -30,7 +30,11 @@ ControlledCrash, mode: safepoint
 [error occurred during error reporting ... elfFile.cpp:742]
 ```
 
-这条信息是错误报告过程中的二次问题，不应覆盖最前面的主原因。主原因仍然是 `whitebox.cpp:199` 的 `vm_exit_out_of_memory`。
+这条信息是错误报告过程中的二次问题，不应覆盖最前面的主原因。解析器现在将原始 VM operation 栈放在 `native_frames`，将报告器失败栈放在 `error_reporting_frames`。主原因仍然是 `whitebox.cpp:199` 的 `vm_exit_out_of_memory`。
+
+## 行号说明
+
+`source_line` 来自 HotSpot Error Log 顶部的错误头，例如 `Internal Error (...:193)`；它表示触发错误的源码位置。信号类日志的错误头没有源码文件和行号，因此 JSON 中为 `null`。native 栈中的 `whitebox.cpp:184` 和 `whitebox.cpp:177` 是调试信息解析出的实际指令位置，分别对应 SIGSEGV 写非法地址和 SIGFPE 整数除零，不是 `doit()` 的入口行。
 
 ## 当前结论和限制
 

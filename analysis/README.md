@@ -19,3 +19,11 @@ python3 tools/parse_hs_err.py \
 ```
 
 本目录中的 `fastdebug-summary.json` 是五份本地日志的去环境化摘要。原始日志包含主机名、用户目录和环境变量，因此没有直接放入公开仓库。
+
+`fixtures/controlled-crash-3.log` 是一份脱敏的最小样本，用来复现解析器对 native OOM 及错误报告器二次错误的区分。完整原始日志仍保留在本地实验环境，不作为公开交付物。
+
+在仓库根目录运行解析器单元测试：
+
+```bash
+python -m unittest tools.test_parse_hs_err
+```

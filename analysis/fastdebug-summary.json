@@ -10,8 +10,8 @@
     "source_line": 193,
     "pid": 79127,
     "tid": 79137,
-    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.test.TencentKona-25-master)",
-    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.test.TencentKona-25-master, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
+    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.<local-build>)",
+    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.<local-build>, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
     "current_thread": {
       "name": "VMThread \"VM Thread\"",
       "id": 79137
@@ -31,6 +31,8 @@
       "V  [libjvm.so+0x1c2233e]  Thread::call_run()+0xbe  (thread.cpp:243)",
       "V  [libjvm.so+0x171705b]  thread_native_entry(Thread*)+0x12b  (os_linux.cpp:899)"
     ],
+    "error_reporting_frames": [],
+    "source_line_meaning": "line reported by the HotSpot error header; for signal logs the header has no source line",
     "direct_cause": "WhiteBox 主动调用 fatal"
   },
   {
@@ -44,8 +46,8 @@
     "source_line": 196,
     "pid": 79156,
     "tid": 79166,
-    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.test.TencentKona-25-master)",
-    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.test.TencentKona-25-master, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
+    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.<local-build>)",
+    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.<local-build>, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
     "current_thread": {
       "name": "VMThread \"VM Thread\"",
       "id": 79166
@@ -65,6 +67,8 @@
       "V  [libjvm.so+0x1c2233e]  Thread::call_run()+0xbe  (thread.cpp:243)",
       "V  [libjvm.so+0x171705b]  thread_native_entry(Thread*)+0x12b  (os_linux.cpp:899)"
     ],
+    "error_reporting_frames": [],
+    "source_line_meaning": "line reported by the HotSpot error header; for signal logs the header has no source line",
     "direct_cause": "guarantee 检查失败"
   },
   {
@@ -78,8 +82,8 @@
     "source_line": 199,
     "pid": 79184,
     "tid": 79194,
-    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.test.TencentKona-25-master)",
-    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.test.TencentKona-25-master, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
+    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.<local-build>)",
+    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.<local-build>, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
     "current_thread": {
       "name": "VMThread \"VM Thread\"",
       "id": 79194
@@ -90,6 +94,16 @@
       "mode": "safepoint"
     },
     "native_frames": [
+      "V  [libjvm.so+0x1d57cc0]  VM_ControlledCrash::doit()+0x100",
+      "V  [libjvm.so+0x1d1952b]  VM_Operation::evaluate()+0xfb",
+      "V  [libjvm.so+0x1d35318]  VMThread::evaluate_operation(VM_Operation*)+0xd8",
+      "V  [libjvm.so+0x1d36233]  VMThread::inner_execute(VM_Operation*)+0x393",
+      "V  [libjvm.so+0x1d363fc]  VMThread::loop()+0x8c",
+      "V  [libjvm.so+0x1d36516]  VMThread::run()+0x96",
+      "V  [libjvm.so+0x1c2233e]  Thread::call_run()+0xbe",
+      "V  [libjvm.so+0x171705b]  thread_native_entry(Thread*)+0x12b"
+    ],
+    "error_reporting_frames": [
       "V  [libjvm.so+0x1d11ed5]  VMError::report_and_die(int, char const*, char const*, __va_list_tag*, Thread*, unsigned char*, void const*, void const*, char const*, int, unsigned long)+0x4e5  (whitebox.cpp:199)",
       "V  [libjvm.so+0xc15ac3]  report_vm_error(char const*, int, char const*, char const*, ...)+0x103",
       "V  [libjvm.so+0xd26f07]  DwarfFile::DebugAranges::find_compilation_unit_offset(unsigned int, unsigned int*)+0x227",
@@ -101,16 +115,9 @@
       "V  [libjvm.so+0x1d10154]  VMError::report(outputStream*, bool)+0x3a64",
       "V  [libjvm.so+0x1d11ed5]  VMError::report_and_die(int, char const*, char const*, __va_list_tag*, Thread*, unsigned char*, void const*, void const*, char const*, int, unsigned long)+0x4e5",
       "V  [libjvm.so+0x1d128f1]",
-      "V  [libjvm.so+0xc15db3]",
-      "V  [libjvm.so+0x1d57cc0]  VM_ControlledCrash::doit()+0x100",
-      "V  [libjvm.so+0x1d1952b]  VM_Operation::evaluate()+0xfb",
-      "V  [libjvm.so+0x1d35318]  VMThread::evaluate_operation(VM_Operation*)+0xd8",
-      "V  [libjvm.so+0x1d36233]  VMThread::inner_execute(VM_Operation*)+0x393",
-      "V  [libjvm.so+0x1d363fc]  VMThread::loop()+0x8c",
-      "V  [libjvm.so+0x1d36516]  VMThread::run()+0x96",
-      "V  [libjvm.so+0x1c2233e]  Thread::call_run()+0xbe",
-      "V  [libjvm.so+0x171705b]  thread_native_entry(Thread*)+0x12b"
+      "V  [libjvm.so+0xc15db3]"
     ],
+    "source_line_meaning": "line reported by the HotSpot error header; for signal logs the header has no source line",
     "direct_cause": "WhiteBox 主动请求 native OOM"
   },
   {
@@ -124,8 +131,8 @@
     "source_line": null,
     "pid": 79212,
     "tid": 79222,
-    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.test.TencentKona-25-master)",
-    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.test.TencentKona-25-master, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
+    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.<local-build>)",
+    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.<local-build>, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
     "current_thread": {
       "name": "VMThread \"VM Thread\"",
       "id": 79222
@@ -145,6 +152,8 @@
       "V  [libjvm.so+0x1c2233e]  Thread::call_run()+0xbe  (thread.cpp:243)",
       "V  [libjvm.so+0x171705b]  thread_native_entry(Thread*)+0x12b  (os_linux.cpp:899)"
     ],
+    "error_reporting_frames": [],
+    "source_line_meaning": "line reported by the HotSpot error header; for signal logs the header has no source line",
     "direct_cause": "非法地址访问导致 SIGSEGV"
   },
   {
@@ -158,8 +167,8 @@
     "source_line": null,
     "pid": 79240,
     "tid": 79250,
-    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.test.TencentKona-25-master)",
-    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.test.TencentKona-25-master, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
+    "jre_version": "OpenJDK Runtime Environment (25.0.4) (fastdebug build 25.0.4-internal-adhoc.<local-build>)",
+    "java_vm": "OpenJDK 64-Bit Server VM (fastdebug 25.0.4-internal-adhoc.<local-build>, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)",
     "current_thread": {
       "name": "VMThread \"VM Thread\"",
       "id": 79250
@@ -179,6 +188,8 @@
       "V  [libjvm.so+0x1c2233e]  Thread::call_run()+0xbe  (thread.cpp:243)",
       "V  [libjvm.so+0x171705b]  thread_native_entry(Thread*)+0x12b  (os_linux.cpp:899)"
     ],
+    "error_reporting_frames": [],
+    "source_line_meaning": "line reported by the HotSpot error header; for signal logs the header has no source line",
     "direct_cause": "整数除零导致 SIGFPE"
   }
 ]

@@ -1,0 +1,10 @@
+#  Out of Memory Error (/src/hotspot/share/prims/whitebox.cpp:199), pid=30, tid=31
+# JRE version: OpenJDK Runtime Environment (fastdebug build test)
+# Java VM: OpenJDK 64-Bit Server VM (fastdebug test)
+# Problematic frame:
+# V  [libjvm.so+0x1]  VM_ControlledCrash::doit()+0x1
+VM_Operation (0x4): ControlledCrash, mode: safepoint
+Native frames:
+V  [libjvm.so+0x1]  VMError::report_and_die()+0x1
+V  [libjvm.so+0x2]  DwarfFile::DebugAranges::find_compilation_unit_offset()+0x1
+V  [libjvm.so+0x3]  VM_ControlledCrash::doit()+0x1

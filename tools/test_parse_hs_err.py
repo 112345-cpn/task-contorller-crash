@@ -2,7 +2,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from parse_hs_err import parse_log
+try:
+    from tools.parse_hs_err import parse_log
+except ModuleNotFoundError:  # Supports direct execution from the repository root.
+    from parse_hs_err import parse_log
 
 
 class ParseHsErrTest(unittest.TestCase):
@@ -56,6 +59,24 @@ C  [libc.so+0x1]  VM_ControlledCrash::doit()+0x1
         self.assertEqual(result["signal_number"], "0xb")
         self.assertIn("SEGV_MAPERR", result["siginfo"])
         self.assertEqual(result["direct_cause"], "非法地址访问导致 SIGSEGV")
+        self.assertEqual(result["error_reporting_frames"], [])
+
+    def test_reporting_failure_is_separate(self) -> None:
+        result = self.parse(
+            """#  Out of Memory Error (/src/hotspot/share/prims/whitebox.cpp:199), pid=30, tid=31
+# JRE version: test
+# Java VM: test vm
+Native frames:
+V  [libjvm.so+0x1]  VMError::report_and_die()+0x1
+V  [libjvm.so+0x2]  DwarfFile::DebugAranges::find_compilation_unit_offset()+0x1
+V  [libjvm.so+0x3]  VM_ControlledCrash::doit()+0x1
+""",
+            name="controlled-crash-3.log",
+        )
+        self.assertEqual(len(result["native_frames"]), 1)
+        self.assertIn("VM_ControlledCrash", result["native_frames"][0])
+        self.assertEqual(len(result["error_reporting_frames"]), 2)
+        self.assertNotIn("VM_ControlledCrash", "\n".join(result["error_reporting_frames"]))
 
 
 if __name__ == "__main__":

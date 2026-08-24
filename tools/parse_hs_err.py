@@ -62,6 +62,19 @@ def _native_sections(lines: list[str]) -> list[list[str]]:
     return sections
 
 
+def _split_reporting_frames(frames: list[str]) -> tuple[list[str], list[str]]:
+    """Separate the original VM operation from a later reporter failure."""
+    report_marker = next(
+        (index for index, frame in enumerate(frames)
+         if "VMError::report_and_die" in frame or "report_vm_error" in frame), None)
+    operation_marker = next(
+        (index for index, frame in enumerate(frames)
+         if "VM_ControlledCrash::doit" in frame), None)
+    if report_marker is None or operation_marker is None or report_marker > operation_marker:
+        return frames, []
+    return frames[operation_marker:], frames[report_marker:operation_marker]
+
+
 def _direct_cause(lines: list[str], signal: str | None, error_kind: str | None) -> str | None:
     text = "\n".join(lines[:40]).lower()
     if signal == "SIGSEGV":
@@ -84,6 +97,12 @@ def _redact_source(path: str | None) -> str | None:
     if marker in path:
         return "<kona>/" + path.split(marker, 1)[1]
     return path
+
+
+def _redact_runtime_text(value: str | None) -> str | None:
+    if value is None:
+        return None
+    return re.sub(r"adhoc\.[^, )]+", "adhoc.<local-build>", value)
 
 
 def parse_log(path: str | Path) -> dict[str, object]:
@@ -125,11 +144,12 @@ def parse_log(path: str | Path) -> dict[str, object]:
     signal = signal_match.group("signal") if signal_match else None
     signal_number = signal_match.group("number") if signal_match else None
     native_sections = _native_sections(lines)
-    native_frames = max(
+    all_native_frames = max(
         native_sections,
         key=lambda section: (any("VM_ControlledCrash" in frame for frame in section), len(section)),
         default=[],
     )
+    native_frames, error_reporting_frames = _split_reporting_frames(all_native_frames)
 
     result: dict[str, object] = {
         "file": path.name,
@@ -144,14 +164,14 @@ def parse_log(path: str | Path) -> dict[str, object]:
         "source_line": source_line,
         "pid": pid,
         "tid": tid,
-        "jre_version": next(
+        "jre_version": _redact_runtime_text(next(
             (_without_log_prefix(line)[len("JRE version: ") :] for line in lines if line.startswith("# JRE version: ")),
             None,
-        ),
-        "java_vm": next(
+        )),
+        "java_vm": _redact_runtime_text(next(
             (_without_log_prefix(line)[len("Java VM: ") :] for line in lines if line.startswith("# Java VM: ")),
             None,
-        ),
+        )),
         "current_thread": {
             "name": thread_match.group("name") if thread_match else None,
             "id": int(thread_match.group("id")) if thread_match else None,
@@ -162,6 +182,10 @@ def parse_log(path: str | Path) -> dict[str, object]:
             "mode": operation_match.group("mode").strip() if operation_match and operation_match.group("mode") else None,
         },
         "native_frames": native_frames,
+        "error_reporting_frames": error_reporting_frames,
+        "source_line_meaning": (
+            "line reported by the HotSpot error header; for signal logs the header has no source line"
+        ),
         "direct_cause": _direct_cause(lines, signal, error_kind),
     }
     return result

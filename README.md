@@ -1,6 +1,6 @@
 # WhiteBox controlledCrash 实验
 
-这是任务一的独立仓库。代码基于 Tencent Kona JDK 25，在 WhiteBox 中增加了一个运行期崩溃入口：
+这是任务一的项目入口仓库。实验基于 Tencent Kona JDK 25，在 WhiteBox 中增加了一个运行期崩溃入口：
 
 ```java
 WhiteBox.getWhiteBox().controlledCrash(type);
@@ -10,7 +10,7 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 
 任务 1.1 已完成：release 和 fastdebug 两种 JDK 均构建成功，五种受控崩溃在两种构建上都通过了 jtreg 自动测试。目前开始任务 1.2 的日志解析工作。
 
-说明：下面的构建和测试结果来自已经完成验证的实验源码树；重新整理仓库只是调整文件归属，没有声称在新分支上重新完成构建。
+说明：构建和测试结果记录在 `REPORT.md`；当前 JDK 源码修改请以 Kona fork 的 `task` 分支为准。
 
 ## 仓库分工
 
