@@ -28,7 +28,7 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - `test/lib/jdk/test/whitebox/WhiteBox.java`
 - `test/hotspot/jtreg/runtime/ErrorHandling/ControlledCrash.java`
 
-查看或复现源码修改时，以 fork 仓库的 `task` 分支为准；本仓库中的 `code/` 和补丁文件只是实验过程中的辅助备份。
+查看或复现源码修改时，以 fork 仓库的 `task` 分支为准。本仓库不重复保存 JDK 源码修改。
 
 ## 建议查看顺序
 
@@ -74,33 +74,12 @@ OpenJDK 64-Bit Server VM (build 25.0.4-internal-adhoc.test.TencentKona-25-master
 
 ## 仓库内容
 
-- `controlled-crash.patch`：早期实验中保留的源码差异备份，不是主要交付物。
-- `code/`：本次修改涉及的四个源码文件备份，正式源码以 fork 仓库的 `task` 分支为准。
 - `PLAN.md`：任务安排。
 - `REPORT.md`：目前的实现和构建记录。
 - `docs/BUILD.md`：release 和 fastdebug 构建命令。
 - `tools/parse_hs_err.py`：HotSpot Error Log 字段解析器。
 - `tools/test_parse_hs_err.py`：解析器单元测试。
 - `analysis/`：去环境化解析结果和初步分析报告。
-
-## 历史补丁
-
-项目早期曾用补丁在另一份 Kona 25 源码树中重放修改。导师要求改为直接在 fork 仓库提交，因此现在不需要通过补丁完成交付。
-
-如果只是为了复现实验，进入 Kona 25 源码仓库后可以执行：
-
-```bash
-git am /path/to/task-contorller-crash/controlled-crash.patch
-```
-
-核心修改位置：
-
-- `src/hotspot/share/prims/whitebox.cpp`
-- `src/hotspot/share/runtime/vmOperation.hpp`
-- `test/lib/jdk/test/whitebox/WhiteBox.java`
-- `test/hotspot/jtreg/runtime/ErrorHandling/ControlledCrash.java`
-
-对应的完整源码文件见 `code/` 目录；根目录的 `controlled-crash.patch` 用于在另一份 Kona 源码树中重放修改。
 
 ## 测试入口
 

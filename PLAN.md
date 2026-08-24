@@ -53,5 +53,5 @@ release 和 fastdebug 均已构建完成，并通过相同的 controlledCrash �
 - 日志解析工具
 - Agent Skill 和 MCP server 的初版
 
-说明：根目录的 `controlled-crash.patch` 和 `code/` 目录是实验过程中的备份材料，正式源码以
+说明：JDK 源码修改不在本仓库重复保存，正式源码以
 [TencentKona-25/task](https://github.com/112345-cpn/TencentKona-25/tree/task) 为准。
