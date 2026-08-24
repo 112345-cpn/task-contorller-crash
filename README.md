@@ -18,7 +18,7 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 
 - Fork 仓库：[112345-cpn/TencentKona-25](https://github.com/112345-cpn/TencentKona-25)
 - 任务分支：[task](https://github.com/112345-cpn/TencentKona-25/tree/task)
-- 对应提交：[Add WhiteBox controlled crash task](https://github.com/112345-cpn/TencentKona-25/commit/32a5876c380f2ecaadefa99038c431e20d400f08)
+- 对应提交：[Add WhiteBox controlled crash support](https://github.com/112345-cpn/TencentKona-25/commit/9a857bc401f725332bf9c54a3cff133a3071c187)
 - 分支基线：官方 `Tencent/TencentKona-25` 的 `universal` 分支
 
 源码修改的位置如下：
