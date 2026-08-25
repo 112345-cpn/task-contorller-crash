@@ -34,11 +34,13 @@ release 和 fastdebug 均已构建完成，并通过相同的 controlledCrash �
 - VM operation
 - native 调用栈
 
-五份 fastdebug 样本的直接原因已经完成初步分析。字段提取和原因判断仍需要增加更多普通 HotSpot Error Log 样本进行验证。
+五份 fastdebug 样本的直接原因已经完成初步分析。解析器已兼容 JBS 真实日志格式（网页复制噪声、真实线程行、assert 消息），字段提取和原因判断见 `analysis/jbs-analysis.md`。
 
-## 第五阶段：已知问题和解决建议（未开始）
+## 第五阶段：已知问题和解决建议（第一版完成）
 
 使用解析结果生成检索关键词，关联 Java Bug System 中的已知问题，并给出解决方案或排查建议。需要明确区分“本实验主动制造的崩溃”和 Java Bug System 中真实缺陷的复现。
+
+第一版已用 3 个有官方结论的真实 JBS bug 验证全链路：解析出的直接原因与官方结论一致；解析器生成“关键词 + affectedVersion”约束的检索 URL，三个案例全部命中原 bug（其中 bad AD file 案例从 461 条候选收敛到唯一命中）。过程与建议见 `analysis/jbs-analysis.md`。
 
 ## 第六阶段：Agent Skill 和 MCP server（未开始）
 

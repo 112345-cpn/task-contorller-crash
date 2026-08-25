@@ -8,7 +8,7 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 
 `type` 取值为 1 到 5，分别触发 fatal、guarantee 失败、native OOM、非法地址访问和整数除零。每次崩溃都应生成 HotSpot Error Log，后续用这些日志做原因分析。
 
-任务 1.1 已完成：release 和 fastdebug 两种 JDK 均构建成功，五种受控崩溃在两种构建上都通过了 jtreg 自动测试。任务 1.2 的第一版日志解析和直接原因分析也已完成。
+任务 1.1 已完成：release 和 fastdebug 两种 JDK 均构建成功，五种受控崩溃在两种构建上都通过了 jtreg 自动测试。任务 1.2 的第一版日志解析和直接原因分析已完成，并用 3 个 JBS 真实崩溃日志验证了已知问题关联和解决建议（见 `analysis/jbs-analysis.md`）。
 
 说明：构建和测试结果记录在 `REPORT.md`；当前 JDK 源码修改请以 Kona fork 的 `task` 分支为准。
 
@@ -51,7 +51,7 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - [x] 在 fastdebug JDK 上完成 1 到 5 的自动测试
 - [x] 在本地保存五种崩溃的完整日志样本
 - [x] 实现第一版日志解析并完成五份样本的直接原因初步分析
-- [ ] 关联 Java Bug System 已知问题并给出建议
+- [x] 关联 Java Bug System 已知问题并给出建议（第一版，3 个真实 JBS 日志验证）
 - [ ] 创建 Agent Skill
 - [ ] 创建 MCP server
 
@@ -59,10 +59,10 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 
 | 导师要求 | 当前状态 | 对应材料 |
 | --- | --- | --- |
-| 解析 HotSpot Error Log | 已完成第一版 | `tools/parse_hs_err.py`、`analysis/fastdebug-summary.json` |
-| 分析崩溃的直接原因 | 已完成五份受控样本的初步分析 | `analysis/REPORT.md` |
-| 关联 Java Bug System 中的已知问题 | 尚未开始 | 下一步工作 |
-| 给出解决方案或建议 | 尚未开始 | 等已知问题检索完成后补充 |
+| 解析 HotSpot Error Log | 已完成第一版，兼容 JBS 真实日志格式 | `tools/parse_hs_err.py`、`analysis/fastdebug-summary.json` |
+| 分析崩溃的直接原因 | 已完成五份受控样本的初步分析；真实日志按 siginfo 与崩溃帧推断 | `analysis/REPORT.md`、`analysis/jbs-analysis.md` |
+| 关联 Java Bug System 中的已知问题 | 第一版完成，3 个真实 JBS 日志全部命中原 bug | `analysis/jbs-analysis.md` |
+| 给出解决方案或建议 | 第一版完成（升级版本 / 规避手段） | `analysis/jbs-analysis.md` |
 | 创建 Agent Skill | 尚未开始 | 后续实现 |
 | 创建 MCP server | 尚未开始 | 后续实现 |
 
@@ -73,7 +73,7 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - `docs/BUILD.md`：release 和 fastdebug 构建命令。
 - `tools/parse_hs_err.py`：HotSpot Error Log 字段解析器。
 - `tools/test_parse_hs_err.py`：解析器单元测试。
-- `analysis/`：去环境化解析结果和初步分析报告。
+- `analysis/`：去环境化解析结果、初步分析报告和 JBS 真实日志实践。
 
 ## 测试入口
 

@@ -4,6 +4,8 @@
 
 初步分析结论见 `REPORT.md`，五份去环境化 JSON 结果见 `fastdebug-summary.json`。
 
+用 JBS 真实崩溃日志（别人的日志，非自制样本）验证“解析 → 直接原因 → 关联已知问题 → 建议”全链路的实践见 `jbs-analysis.md`。
+
 运行单个文件：
 
 ```bash

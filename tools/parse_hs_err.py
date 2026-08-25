@@ -14,7 +14,11 @@ copies (for example ``#  JRE version:`` with two spaces), and the
 
 For real-world logs (no controlledCrash marker) the parser additionally
 derives a best-effort direct cause from siginfo and the problematic frame,
-and proposes JBS search keywords. These are hints, not claims.
+and proposes JBS search keywords together with a Jira jql URL. When the
+JRE version can be read from the log, a second, version-constrained URL
+(``affectedVersion = ...``) is proposed as well: on JBS the keyword alone
+often matches hundreds of issues, while the version constraint narrows it
+to a handful. These are hints, not claims.
 """
 
 from __future__ import annotations
@@ -52,6 +56,7 @@ ASSERT_RE = re.compile(
     r"^#\s+(?P<kind>assert|guarantee)\((?P<expr>.*?)\)\s+failed:\s*(?P<msg>.*)$"
 )
 JRE_VERSION_RE = re.compile(r"^#\s+JRE version:\s*(?P<value>.*)$")
+JRE_VERSION_TOKEN_RE = re.compile(r"\((?P<token>\d[\w.+-]*)\)")
 JAVA_VM_RE = re.compile(r"^#\s+Java VM:\s*(?P<value>.*)$")
 PROBLEMATIC_FRAME_HEADER_RE = re.compile(r"^#\s+Problematic frame:\s*$")
 FRAME_RE = re.compile(r"^[VvJjCc]\s+")
@@ -179,12 +184,31 @@ def _subsystem_hints(*texts: str | None) -> list[str]:
     return hints
 
 
+def _java_version(jre_version: str | None) -> str | None:
+    """Best-effort short version like ``21`` or ``11.0.20`` from the JRE line.
+
+    Takes the first parenthesized token that starts with a digit (so
+    ``Java(TM)`` is skipped), strips build suffixes such as ``+35`` or
+    ``-internal``, and drops a trailing ``.0`` (``21.0`` -> ``21``).
+    """
+    if jre_version is None:
+        return None
+    match = JRE_VERSION_TOKEN_RE.search(jre_version)
+    if not match:
+        return None
+    token = match.group("token").split("+")[0].split("-")[0]
+    if token.endswith(".0"):
+        token = token[: -2]
+    return token or None
+
+
 def _jbs_search(
     frame_symbol: str | None,
     assert_message: str | None,
     signal: str | None,
     thread_name: str | None,
     java_vm: str | None,
+    java_version: str | None,
 ) -> dict[str, object] | None:
     """Propose search keywords for the Java Bug System (best effort)."""
     keywords: list[str] = []
@@ -200,11 +224,16 @@ def _jbs_search(
     # the problematic frame symbol; otherwise the signal name.
     primary = assert_message or frame_symbol or signal
     jql = f'text ~ "{primary}"'
-    return {
+    result: dict[str, object] = {
         "keywords": keywords,
         "subsystems": _subsystem_hints(frame_symbol, thread_name, java_vm) or None,
         "url": JBS_SEARCH_URL + quote(jql),
     }
+    if java_version:
+        jql_version = f'{jql} AND affectedVersion = "{java_version}"'
+        result["version"] = java_version
+        result["url_version"] = JBS_SEARCH_URL + quote(jql_version)
+    return result
 
 
 def _redact_source(path: str | None) -> str | None:
@@ -285,13 +314,15 @@ def parse_log(path: str | Path) -> dict[str, object]:
 
     thread_name = _group(thread_match, "name")
     java_vm = _group(_first_match(lines, JAVA_VM_RE), "value")
+    jre_version = _redact_runtime_text(_group(_first_match(lines, JRE_VERSION_RE), "value"))
+    java_version = _java_version(jre_version)
 
     if crash_type is not None:
         direct_cause = _controlled_cause(lines, signal, error_kind)
     else:
         direct_cause = _inferred_cause(assert_match, signal, fault_address, segv_code, frame_symbol)
     jbs_search = (
-        _jbs_search(frame_symbol, assert_message, signal, thread_name, java_vm)
+        _jbs_search(frame_symbol, assert_message, signal, thread_name, java_vm, java_version)
         if crash_type is None
         else None
     )
@@ -308,7 +339,8 @@ def parse_log(path: str | Path) -> dict[str, object]:
         "source_line": source_line,
         "pid": pid,
         "tid": tid,
-        "jre_version": _redact_runtime_text(_group(_first_match(lines, JRE_VERSION_RE), "value")),
+        "jre_version": jre_version,
+        "java_version": java_version,
         "java_vm": _redact_runtime_text(java_vm),
         "current_thread": {
             "name": thread_name,

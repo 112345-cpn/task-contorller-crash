@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from urllib.parse import unquote
 
 try:
     from tools.parse_hs_err import parse_log
@@ -60,6 +61,37 @@ C  [libc.so+0x1]  VM_ControlledCrash::doit()+0x1
         self.assertIn("SEGV_MAPERR", result["siginfo"])
         self.assertEqual(result["direct_cause"], "非法地址访问导致 SIGSEGV")
         self.assertEqual(result["error_reporting_frames"], [])
+
+    def test_real_world_jbs_log(self) -> None:
+        result = self.parse(
+            """#  SIGSEGV (0xb) at pc=0x00007f2b1eb8e363, pid=3558129, tid=1440504
+#
+# JRE version: Java(TM) SE Runtime Environment (21.0+35) (build 21+35-LTS-2513)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (21+35-LTS-2513, mixed mode, z gc, linux-amd64)
+# Problematic frame:
+# V  [libjvm.so+0x8f9363]  JavaThread::is_lock_owned(unsigned char*) const+0x23
+Current thread (0x00007f23f09ba260):  JavaThread "Thread-1833141" daemon [_thread_in_vm, id=1440504, stack(0x1,0x2)]
+siginfo: si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), si_addr: 0x0000000000000000
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0x8f9363]  JavaThread::is_lock_owned(unsigned char*) const+0x23  (monitorChunk.hpp:40)
+V  [libjvm.so+0xea3a84]  Threads::owning_thread_from_monitor(ThreadsList*, ObjectMonitor*)+0xd4
+""",
+            name="hs_err_pid3558129.log",
+        )
+        self.assertIsNone(result["crash_type"])
+        self.assertEqual(result["error_kind"], "Signal")
+        self.assertEqual(result["java_version"], "21")
+        self.assertEqual(result["current_thread"]["state"], "_thread_in_vm")
+        self.assertIn("is_lock_owned", result["problematic_frame"])
+        self.assertIn("空指针解引用", result["direct_cause"])
+        self.assertIn("is_lock_owned", result["direct_cause"])
+        self.assertEqual(result["error_reporting_frames"], [])
+        search = result["jbs_search"]
+        self.assertIsNotNone(search)
+        self.assertIn("JavaThread::is_lock_owned", search["keywords"])
+        self.assertIn("gc", search["subsystems"])
+        self.assertIn('text ~ "JavaThread::is_lock_owned"', unquote(search["url"]))
+        self.assertIn('affectedVersion = "21"', unquote(search["url_version"]))
 
     def test_reporting_failure_is_separate(self) -> None:
         result = self.parse(
