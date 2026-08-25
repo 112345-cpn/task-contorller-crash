@@ -1,0 +1,22 @@
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  Internal Error (/home/repository/jdk11u/src/hotspot/share/opto/matcher.cpp:1591), pid=45504, tid=50587
+#  assert(false) failed: bad AD file
+#
+#  JRE version: OpenJDK Runtime Environment (11.0.20) (fastdebug build 11.0.20-internal+0-adhoc.jdk11u)
+#  Java VM: OpenJDK 64-Bit Server VM (fastdebug 11.0.20-internal+0-adhoc.jdk11u, compiled mode, tiered, compressed oops, g1 gc, linux-amd64)
+#  Problematic frame:
+#  V  [libjvm.so+0x10]  Matcher::Matcher()+0x1
+#
+--------------- T H R E A D ---------------
+Current thread (0x00007f2b12345678): JavaThread "C2 compilerThread0" daemon [_thread_in_native, id=50587, stack(0x00007f2524600000,0x00007f2524700000) (1024K)]
+Stack: [0x00007f2524600000,0x00007f2524700000], sp=0x00007f25246fdf40, free space=1015k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0x10]  Matcher::Matcher()+0x1  (matcher.cpp:1591)
+V  [libjvm.so+0x11]  Compile::Compile(ciEnv*, C2Compiler*, ciMethod*, int, bool, bool, bool, bool, DirectiveSet*)+0x2  (compile.cpp:450)
+V  [libjvm.so+0x12]  C2Compiler::compile_method(ciEnv*, ciMethod*, int, DirectiveSet*)+0x3  (c2compiler.cpp:120)
+V  [libjvm.so+0x13]  CompileBroker::invoke_compiler_on_method(CompileTask*)+0x4  (compileBroker.cpp:1910)
+V  [libjvm.so+0x14]  CompileBroker::compiler_thread_loop()+0x5  (compileBroker.cpp:1750)
+V  [libjvm.so+0x15]  JavaThread::thread_main_inner()+0x7  (javaThread.cpp:719)
+V  [libjvm.so+0x16]  Thread::call_run()+0x8  (thread.cpp:217)
+V  [libjvm.so+0x17]  thread_native_entry(Thread*)+0x9  (os_linux.cpp:778)

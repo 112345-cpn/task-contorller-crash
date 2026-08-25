@@ -1,0 +1,30 @@
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x0000000109ebf5cc, pid=5235, tid=25603
+#
+#  JRE version: Java(TM) SE Runtime Environment (21.0) (slowdebug build 21-internal-LTS-2023-02-16-1211495.dcubed...)
+#  Java VM: OpenJDK 64-Bit Server VM (slowdebug 21-internal-LTS-2023-02-16-1211495.dcubed..., mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, bsd-aarch64)
+#  Problematic frame:
+#  V  [libjvm.dylib+0xebf5cc]  JavaThread::is_interp_only_mode()+0x14
+#
+--------------- T H R E A D ---------------
+Current thread (0x0000000133810a10): JavaThread "JVMTI agent thread" daemon [_thread_in_vm, id=25603, stack(0x000000016d998000,0x000000016db9b000)] _threads_hazard_ptr=0x0000000125558250
+Stack: [0x000000016d998000,0x000000016db9b000], sp=0x000000016db9a6e0, free space=2057k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.dylib+0xebf5cc]  JavaThread::is_interp_only_mode()+0x14
+V  [libjvm.dylib+0xb6a700]  JvmtiThreadState::is_interp_only_mode()+0x44
+V  [libjvm.dylib+0xb6c660]  JvmtiEventControllerPrivate::recompute_thread_enabled(JvmtiThreadState*)+0x164
+V  [libjvm.dylib+0xb6c91c]  JvmtiEventControllerPrivate::recompute_enabled()+0x1f0
+V  [libjvm.dylib+0xb6df20]  JvmtiEventControllerPrivate::set_user_enabled(JvmtiEnvBase*, JavaThread*, Handle, jvmtiEvent, bool)+0x1a4
+V  [libjvm.dylib+0xb52588]  JvmtiEnv::SetEventNotificationMode(jvmtiEventMode, jvmtiEvent, _jobject*, ...)+0x1a4
+V  [libjvm.dylib+0xafad3c]  jvmti_SetEventNotificationMode(_jvmtiEnv*, jvmtiEventMode, jvmtiEvent, _jobject*, ...)+0x140
+C  [libGetStackTraceSuspendedStress.dylib+0x3b18]  _jvmtiEnv::SetEventNotificationMode(jvmtiEventMode, jvmtiEvent, _jobject*, ...)+0x3c
+C  [libGetStackTraceSuspendedStress.dylib+0x5e50]  check_vthread_consistency_suspended(_jvmtiEnv*, JNIEnv_*, _jobject*)+0xc0
+C  [libGetStackTraceSuspendedStress.dylib+0x4d80]  agentProc(_jvmtiEnv*, JNIEnv_*, void*)+0x19c
+V  [libjvm.dylib+0xb801d8]  JvmtiAgentThread::call_start_function()+0x74
+V  [libjvm.dylib+0xb8010c]  JvmtiAgentThread::start_function_wrapper(JavaThread*, JavaThread*)+0x60
+V  [libjvm.dylib+0x90be18]  JavaThread::thread_main_inner()+0x108
+V  [libjvm.dylib+0xff82b0]  Thread::call_run()+0x154
+V  [libjvm.dylib+0xdb6ed4]  thread_native_entry(Thread*)+0x138
+C  [libsystem_pthread.dylib+0x7878]  _pthread_start+0x140
+siginfo: si_signo: 11 (SIGSEGV), si_code: 2 (SEGV_ACCERR), si_addr: 0x0000000000000560

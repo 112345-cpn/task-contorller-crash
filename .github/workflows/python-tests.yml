@@ -18,3 +18,7 @@ jobs:
       - run: python tools/parse_hs_err.py analysis/fixtures/controlled-crash-3.log > /tmp/controlled-crash-3.json
       - name: Verify parsed crash type 3 result
         run: python -c "import json; d=json.load(open('/tmp/controlled-crash-3.json'))[0]; assert d['crash_type']==3 and d['error_kind']=='Out of Memory Error' and 'native OOM' in d['direct_cause'] and d['error_reporting_frames'], d"
+      - name: Install MCP SDK and check server tool registration
+        run: |
+          pip install -q "mcp>=1.0"
+          python -c "import asyncio, sys; sys.path.insert(0,'tools'); import hs_err_mcp_server as s; names=[t.name for t in asyncio.run(s.mcp.list_tools())]; assert {'parse_hs_err','search_jbs','analyze_hs_err'} <= set(names), names; print('MCP tools:', names)"

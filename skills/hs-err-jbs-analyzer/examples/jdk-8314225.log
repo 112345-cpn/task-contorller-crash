@@ -1,0 +1,29 @@
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007f2b1eb8e363, pid=3558129, tid=1440504
+#
+#  JRE version: Java(TM) SE Runtime Environment (21.0+35) (build 21+35-LTS-2513)
+#  Java VM: Java HotSpot(TM) 64-Bit Server VM (21+35-LTS-2513, mixed mode, sharing, tiered, compressed class ptrs, z gc, linux-amd64)
+#  Problematic frame:
+#  V  [libjvm.so+0x8f9363]  JavaThread::is_lock_owned(unsigned char*) const+0x23
+#
+---------------  T H R E A D  ---------------
+Current thread (0x00007f23f09ba260): JavaThread "Thread-1833141" daemon [_thread_in_vm, id=1440504, stack(0x00007f2524600000,0x00007f2524700000) (1024K)] _threads_hazard_ptr=0x00007f25c88e3bb0
+Stack: [0x00007f2524600000,0x00007f2524700000], sp=0x00007f25246fdf40, free space=1015k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0x8f9363]  JavaThread::is_lock_owned(unsigned char*) const+0x23  (monitorChunk.hpp:40)
+V  [libjvm.so+0xea3a84]  Threads::owning_thread_from_monitor(ThreadsList*, ObjectMonitor*)+0xd4  (threads.cpp:1214)
+V  [libjvm.so+0xe9f65a]  ThreadSnapshot::initialize(ThreadsList*, JavaThread*)+0x1fa  (threadService.cpp:948)
+V  [libjvm.so+0xe9f914]  ThreadDumpResult::add_thread_snapshot(JavaThread*)+0x64  (threadService.cpp:573)
+V  [libjvm.so+0xc01665]  jmm_GetThreadInfo+0x4a5  (management.cpp:1133)
+J  1904181 sun.management.ThreadImpl.getThreadInfo1([JI[Ljava/lang/management/ThreadInfo;)V java.management@21 (0 bytes) @ 0x00007f2b0c159b95 [0x00007f2b0c159aa0+0x00000000000000f5]
+j  sun.management.ThreadImpl.getThreadInfo(J)Ljava/lang/management/ThreadInfo;+3 [java.management@21
+v  ~StubRoutines::call_stub 0x00007f2b08070cbf
+V  [libjvm.so+0x8dd585]  JavaCalls::call_helper(JavaValue*, methodHandle const&, JavaCallArguments*, JavaThread*)+0x2e5  (javaCalls.cpp:415)
+V  [libjvm.so+0xe97ed8]  Thread::call_run()+0xa8  (thread.cpp:217)
+V  [libjvm.so+0xcbe25a]  thread_native_entry(Thread*)+0xda  (os_linux.cpp:778)
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+J  1904181 sun.management.ThreadImpl.getThreadInfo1([JI[Ljava/lang/management/ThreadInfo;)V [java.management@21 (0 bytes) @ 0x00007f2b0c159b1e [0x00007f2b0c159aa0+0x000000000000007e]
+j  sun.management.ThreadImpl.getThreadInfo(J)Ljava/lang/management/ThreadInfo;+3 [java.management@21
+v  ~StubRoutines::call_stub 0x00007f2b08070cbf
+siginfo: si_signo: 11 (SIGSEGV), si_code: 128 (SI_KERNEL), si_addr: 0x0000000000000000

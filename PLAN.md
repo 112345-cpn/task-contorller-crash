@@ -42,9 +42,14 @@ release 和 fastdebug 均已构建完成，并通过相同的 controlledCrash �
 
 第一版已用 3 个有官方结论的真实 JBS bug 验证全链路：解析出的直接原因与官方结论一致；解析器生成“关键词 + affectedVersion”约束的检索 URL，三个案例全部命中原 bug（其中 bad AD file 案例从 461 条候选收敛到唯一命中）。过程与建议见 `analysis/jbs-analysis.md`。
 
-## 第六阶段：Agent Skill 和 MCP server（未开始）
+## 第六阶段：Agent Skill 和 MCP server（已完成）
 
 日志解析和分析流程稳定后，再封装 Agent Skill 和 MCP server。Agent Skill 负责规定分析流程；MCP server 负责提供日志读取、解析和 Bug 检索工具。
+
+第一版已落地并自测：
+
+- **Agent Skill**（`skills/hs-err-jbs-analyzer/`）：SKILL.md 定义四步工作流（解析→解释原因→JBS 关联→建议），配套脚本 `analyze_hs_err.py`（JSON / `--jbs` 联机检索 / `--report` 报告）和两份 references 速查，examples 内置 3 份有已知答案的 JBS 样例日志作正确性对照。
+- **MCP server**（`tools/hs_err_mcp_server.py`）：stdio 传输，暴露 `parse_hs_err` / `search_jbs` / `analyze_hs_err` 三个工具，复用 `parse_hs_err.py`。端到端自测（`tools/test_mcp_server_e2e.py`）验证：解析 8314225 得到正确直接原因、版本约束检索命中 JDK-8314225、8312741 完整分析报告给出修复版本建议。依赖 mcp 2.x（`MCPServer` 接口），安装与客户端配置见 `docs/MCP.md`。
 
 ## 最终交付
 

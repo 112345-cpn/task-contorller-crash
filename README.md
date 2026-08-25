@@ -52,8 +52,8 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - [x] 在本地保存五种崩溃的完整日志样本
 - [x] 实现第一版日志解析并完成五份样本的直接原因初步分析
 - [x] 关联 Java Bug System 已知问题并给出建议（第一版，3 个真实 JBS 日志验证）
-- [ ] 创建 Agent Skill
-- [ ] 创建 MCP server
+- [x] 创建 Agent Skill（hs-err-jbs-analyzer，见 `skills/`）
+- [x] 创建 MCP server（hs-err-jbs-analyzer，见 `tools/hs_err_mcp_server.py`）
 
 ## 任务 1.2 对照
 
@@ -63,8 +63,8 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 | 分析崩溃的直接原因 | 已完成五份受控样本的初步分析；真实日志按 siginfo 与崩溃帧推断 | `analysis/REPORT.md`、`analysis/jbs-analysis.md` |
 | 关联 Java Bug System 中的已知问题 | 第一版完成，3 个真实 JBS 日志全部命中原 bug | `analysis/jbs-analysis.md` |
 | 给出解决方案或建议 | 第一版完成（升级版本 / 规避手段） | `analysis/jbs-analysis.md` |
-| 创建 Agent Skill | 尚未开始 | 后续实现 |
-| 创建 MCP server | 尚未开始 | 后续实现 |
+| 创建 Agent Skill | 已完成（hs-err-jbs-analyzer：解析→原因→JBS 关联→建议全流程） | `skills/hs-err-jbs-analyzer/` |
+| 创建 MCP server | 已完成（parse_hs_err / search_jbs / analyze_hs_err 三工具，stdio） | `tools/hs_err_mcp_server.py`、`docs/MCP.md` |
 
 ## 仓库内容
 
@@ -73,6 +73,10 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - `docs/BUILD.md`：release 和 fastdebug 构建命令。
 - `tools/parse_hs_err.py`：HotSpot Error Log 字段解析器。
 - `tools/test_parse_hs_err.py`：解析器单元测试。
+- `tools/hs_err_mcp_server.py`：MCP server（解析 / JBS 检索 / 完整分析三工具）。
+- `tools/test_mcp_server_e2e.py`：MCP server 端到端自测（stdio 协议拉起真实服务）。
+- `docs/MCP.md`：MCP server 安装、配置与使用说明。
+- `skills/`：Agent Skill `hs-err-jbs-analyzer`（解析→原因→JBS 关联→建议的工作流封装）。
 - `analysis/`：去环境化解析结果、初步分析报告和 JBS 真实日志实践。
 
 ## 测试入口
