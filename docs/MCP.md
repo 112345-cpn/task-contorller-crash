@@ -35,10 +35,10 @@
 ## 安装依赖
 
 ```bash
-pip install "mcp>=1.0"
+pip install "mcp>=2.0"
 ```
 
-本项目使用 mcp 2.x（`mcp.server.mcpserver.MCPServer` 接口）。
+本项目使用 mcp 2.x（`mcp.server.mcpserver.MCPServer` 接口；1.x 的 FastMCP 接口不兼容）。
 
 ## 运行
 

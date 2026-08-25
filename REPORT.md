@@ -5,7 +5,7 @@
 
 ## 完成情况
 
-本阶段完成了 WhiteBox `controlledCrash(int)` 接口、五种受控崩溃实现、jtreg 测试程序，以及 Kona JDK 25 的 release 和 fastdebug 构建。两种构建上的自动测试均通过，五份 fastdebug 崩溃日志也已生成。任务 1.1 已完成，下一步开始任务 1.2 的日志解析。
+本阶段完成了 WhiteBox `controlledCrash(int)` 接口、五种受控崩溃实现、jtreg 测试程序，以及 Kona JDK 25 的 release 和 fastdebug 构建。两种构建上的自动测试均通过，五份 fastdebug 崩溃日志也已生成。任务 1.1 已完成；任务 1.2 的日志解析与 JBS 关联工具链也已全部完成（见文末"任务 1.2 当前进度"）。
 
 ## 实现内容
 

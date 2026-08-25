@@ -36,7 +36,7 @@ GET https://bugs.openjdk.org/rest/api/2/search
   &fields=summary,status,resolution,fixVersions
 ```
 
-- 无认证、无速率限制限制（合理频率）。
+- 无认证、无速率限制（合理频率）。
 - `fixVersions` 含修复版本（含 backport，如 `21.0.5`、`17.0.15`），是“给建议”的依据。
 - 关联 issue（backport/relates-to）可从 `issuelinks` 字段获取：
   `GET /rest/api/2/issue/JDK-8314225?fields=issuelinks`。
