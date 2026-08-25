@@ -38,4 +38,6 @@ ControlledCrash, mode: safepoint
 
 ## 当前结论和限制
 
-当前只能确认这五份实验日志的直接原因，不能据此声称找到了 Java Bug System 中的已知缺陷。下一步需要根据错误类型、源码位置和 native 栈关键词检索 Java Bug System，并把“已知问题”与“本实验主动制造的故障”区分开。
+这五份实验日志的直接原因已确认，并明确区分了"本实验主动制造的故障"（日志中的 `VM_ControlledCrash` 标记）与"Java Bug System 中的真实缺陷"（以官方 issue 结论为准）。
+
+"解析 → 直接原因 → 关联已知问题 → 建议"的全链路已用 3 个有官方结论的真实 JBS 日志验证（见 `jbs-analysis.md`）：解析出的直接原因与官方结论一致，版本约束检索全部命中原 bug。

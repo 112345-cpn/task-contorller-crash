@@ -75,7 +75,9 @@ python scripts/analyze_hs_err.py <hs_err.log> --jbs --report --out hs-err-analys
 
 - 脚本位于 `scripts/`，直接从任意目录用绝对路径运行即可：
   `python <skill目录>/scripts/analyze_hs_err.py <日志> --jbs --report`
-- 脚本依赖同一目录的 `parse_hs_err.py`（与仓库 `tools/parse_hs_err.py` 保持同步）。
+- 脚本依赖同一目录的 `parse_hs_err.py`——这是仓库 `tools/parse_hs_err.py` 的
+  **同步副本**。skill 保持自包含（拷贝整个目录即装即用）；改动解析器以
+  `tools/` 版本为准（有 CI 覆盖），改完同步覆盖本副本。
 - `--report` 输出的 Markdown 以"基本信息 → 关键证据 → 崩溃栈 → JBS 关联 → 建议"组织，
   可直接作为给用户/导师的分析材料。
 

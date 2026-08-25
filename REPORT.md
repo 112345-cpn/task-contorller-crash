@@ -105,12 +105,12 @@ TEST SUCCESS
 
 ## 任务 1.2 当前进度
 
-第一版解析器已经放在 `tools/parse_hs_err.py`，并用两个单元测试覆盖 `Internal Error` 和信号日志。五份 fastdebug 样本的去环境化 JSON 摘要和直接原因分析见 `analysis/`。
+日志解析与崩溃分析工具链已完成，五个子项全部落地：
 
-对照任务要求的进度表见 [README.md](README.md#任务-12-对照)。
+1. **解析真实 hs_err**：`tools/parse_hs_err.py` 兼容 JBS 网页复制的双空格格式、真实 JavaThread 行、assert 消息和 siginfo 细节，4 个单元测试覆盖（`tools/test_parse_hs_err.py`）。
+2. **推断直接原因**：输出 `direct_cause` / `_inferred_cause` / `fault_address`，区分本实验主动制造的崩溃与真实缺陷。
+3. **关联 JBS 已知问题**：解析器生成"关键词 + affectedVersion"约束的检索 URL，3 个有官方结论的真实 bug（JDK-8314225 / 8303086 / 8312741）全部命中原 issue。
+4. **给出解决建议**：三案例报告见 `analysis/jbs-analysis.md`（官方结论 + 升级/规避建议）。
+5. **工具链封装**：Agent Skill（`skills/hs-err-jbs-analyzer/`）+ MCP server（`tools/hs_err_mcp_server.py`，parse_hs_err / search_jbs / analyze_hs_err 三工具）。
 
-## 尚未完成
-
-还没有完成 Java Bug System 已知问题检索、解决建议、Agent Skill 和 MCP server。
-
-下一步根据解析出的错误类型、源码位置和 native 栈关键词检索已知问题。
+对照任务要求的进度表见 [README.md](README.md#任务-12-对照)，MCP server 安装见 [docs/MCP.md](docs/MCP.md)。

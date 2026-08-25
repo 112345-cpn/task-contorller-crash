@@ -71,13 +71,20 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 - `PLAN.md`：任务安排。
 - `REPORT.md`：目前的实现和构建记录。
 - `docs/BUILD.md`：release 和 fastdebug 构建命令。
-- `tools/parse_hs_err.py`：HotSpot Error Log 字段解析器。
+- `tools/parse_hs_err.py`：HotSpot Error Log 字段解析器（工具本体，CI 与 MCP server 均依赖）。
 - `tools/test_parse_hs_err.py`：解析器单元测试。
 - `tools/hs_err_mcp_server.py`：MCP server（解析 / JBS 检索 / 完整分析三工具）。
 - `tools/test_mcp_server_e2e.py`：MCP server 端到端自测（stdio 协议拉起真实服务）。
 - `docs/MCP.md`：MCP server 安装、配置与使用说明。
-- `skills/`：Agent Skill `hs-err-jbs-analyzer`（解析→原因→JBS 关联→建议的工作流封装）。
+- `skills/`：Agent Skill `hs-err-jbs-analyzer`（解析→原因→JBS 关联→建议的工作流封装，AI 便携版）。
 - `analysis/`：去环境化解析结果、初步分析报告和 JBS 真实日志实践。
+
+## tools/ 与 skills/ 的分工
+
+- `tools/` 是**工具本体**：主解析器、MCP server、单测都在这，受 CI 覆盖，`docs/MCP.md` 的配置直接引用。
+- `skills/` 是**给 AI 用的便携封装**：从 `tools/` 的成果打包成自包含目录，拷到 `~/.workbuddy/skills/` 即装即用，不依赖仓库其他路径。
+- `skills/hs-err-jbs-analyzer/scripts/parse_hs_err.py` 与 `tools/parse_hs_err.py` 是同一份代码的两个副本。
+  **维护约定：改动解析器逻辑以 `tools/` 版本为准（有 CI 验证），改完把新文件同步覆盖到 skill 的 `scripts/` 副本，保持两边一致。**
 
 ## 测试入口
 

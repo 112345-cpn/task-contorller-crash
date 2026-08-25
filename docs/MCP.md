@@ -20,6 +20,18 @@
   （实测 `bad AD file` 由 461 条收敛到唯一命中）。
 - `analyze_hs_err` 网络失败时自动降级为仅本地解析，不中断。
 
+## 与 skills/ 的分工
+
+本仓库同时提供同名 Agent Skill（`skills/hs-err-jbs-analyzer/`）。二者关系：
+
+- `tools/` 是**工具本体**：MCP server 与解析器、单测都在此，受 CI 覆盖，本文件配置的
+  运行入口就是 `tools/hs_err_mcp_server.py`。
+- `skills/` 是**给 AI 用的便携封装**：SKILL.md 教 AI 按"解析→原因→JBS 关联→建议"
+  工作流执行，自带 `parse_hs_err.py` / `analyze_hs_err.py` 副本与样例日志，拷到
+  `~/.workbuddy/skills/` 即装即用，不依赖仓库其他路径。
+- 两处 `parse_hs_err.py` 保持同步：**改动以 `tools/` 版本为准（CI 验证），改完覆盖
+  skill 的 `scripts/` 副本**。
+
 ## 安装依赖
 
 ```bash
