@@ -4,6 +4,17 @@
 The parser is deliberately conservative. It reports text that is present in
 the log and uses the controlledCrash message only to label the known sample
 type. It does not claim that a log matches a Java bug.
+
+Logs copied from the Java Bug System (JBS) are supported as well. All header
+regexes tolerate the wider spacing produced by JBS attachments and web
+copies (for example ``#  JRE version:`` with two spaces), and the
+``Current thread`` line is accepted both in the controlled-crash layout
+(``[id=...]``) and in the real-world layout that carries thread state
+(``daemon [_thread_in_vm, id=...]``).
+
+For real-world logs (no controlledCrash marker) the parser additionally
+derives a best-effort direct cause from siginfo and the problematic frame,
+and proposes JBS search keywords. These are hints, not claims.
 """
 
 from __future__ import annotations
@@ -13,6 +24,7 @@ import json
 import re
 from pathlib import Path
 from typing import Iterable
+from urllib.parse import quote
 
 
 ERROR_RE = re.compile(
@@ -26,14 +38,25 @@ SIGNAL_RE = re.compile(
 TYPE_RE = re.compile(r"controlled crash requested through WhiteBox \(type (?P<type>[1-5])\)")
 FILE_TYPE_RE = re.compile(r"controlled-crash-(?P<type>[1-5])\.log$")
 CURRENT_THREAD_RE = re.compile(
-    r"^Current thread \((?P<address>[^)]+)\):\s+(?P<name>.*?)\s+\[id=(?P<id>\d+),"
+    r"^Current thread \((?P<address>[^)]+)\):\s+(?P<name>.*?)"
+    r"\s*\[(?:(?P<state>_thread_\w+),\s*)?id=(?P<id>\d+)"
 )
 VM_OPERATION_RE = re.compile(
     r"^VM_Operation \([^)]*\):\s+(?P<name>[^,]+)"
     r"(?:, mode: (?P<mode>[^,]+))?"
 )
 SIGINFO_RE = re.compile(r"^siginfo:\s+(?P<value>.*)$")
+FAULT_ADDRESS_RE = re.compile(r"si_addr:\s*(?P<addr>0x[0-9a-fA-F]+)")
+SEGV_CODE_RE = re.compile(r"si_code:\s*\d+\s*\((?P<code>[A-Z_]+)\)")
+ASSERT_RE = re.compile(
+    r"^#\s+(?P<kind>assert|guarantee)\((?P<expr>.*?)\)\s+failed:\s*(?P<msg>.*)$"
+)
+JRE_VERSION_RE = re.compile(r"^#\s+JRE version:\s*(?P<value>.*)$")
+JAVA_VM_RE = re.compile(r"^#\s+Java VM:\s*(?P<value>.*)$")
+PROBLEMATIC_FRAME_HEADER_RE = re.compile(r"^#\s+Problematic frame:\s*$")
 FRAME_RE = re.compile(r"^[VvJjCc]\s+")
+FRAME_SYMBOL_RE = re.compile(r"^\s*[VJjCc]\s+\[[^\]]+\]\s+(?P<symbol>[^(]+?)\s*(?=\(|$)")
+JBS_SEARCH_URL = "https://bugs.openjdk.org/issues/?jql="
 
 
 def _without_log_prefix(line: str) -> str:
@@ -42,6 +65,11 @@ def _without_log_prefix(line: str) -> str:
 
 def _first_match(lines: list[str], pattern: re.Pattern[str]) -> re.Match[str] | None:
     return next((match for line in lines if (match := pattern.search(line))), None)
+
+
+def _group(match: re.Match[str] | None, name: str) -> str | None:
+    value = match.group(name) if match else None
+    return value.strip() if isinstance(value, str) else value
 
 
 def _native_sections(lines: list[str]) -> list[list[str]]:
@@ -63,31 +91,120 @@ def _native_sections(lines: list[str]) -> list[list[str]]:
 
 
 def _split_reporting_frames(frames: list[str]) -> tuple[list[str], list[str]]:
-    """Separate the original VM operation from a later reporter failure."""
+    """Separate the original VM operation from a later reporter failure.
+
+    Real-world logs do not carry the VM_ControlledCrash marker, so the whole
+    section is returned as crash frames and the reporting list is empty.
+    """
     report_marker = next(
-        (index for index, frame in enumerate(frames)
-         if "VMError::report_and_die" in frame or "report_vm_error" in frame), None)
+        (
+            index for index, frame in enumerate(frames)
+            if "VMError::report_and_die" in frame or "report_vm_error" in frame
+        ),
+        None,
+    )
     operation_marker = next(
-        (index for index, frame in enumerate(frames)
-         if "VM_ControlledCrash::doit" in frame), None)
+        (index for index, frame in enumerate(frames) if "VM_ControlledCrash::doit" in frame),
+        None,
+    )
     if report_marker is None or operation_marker is None or report_marker > operation_marker:
         return frames, []
     return frames[operation_marker:], frames[report_marker:operation_marker]
 
 
-def _direct_cause(lines: list[str], signal: str | None, error_kind: str | None) -> str | None:
-    text = "\n".join(lines[:40]).lower()
+def _controlled_cause(lines: list[str], signal: str | None, error_kind: str | None) -> str | None:
+    """Direct cause of the known controlledCrash samples."""
     if signal == "SIGSEGV":
         return "非法地址访问导致 SIGSEGV"
     if signal == "SIGFPE":
         return "整数除零导致 SIGFPE"
     if error_kind == "Out of Memory Error":
         return "WhiteBox 主动请求 native OOM"
+    text = "\n".join(lines[:40]).lower()
     if "guarantee(false) failed" in text:
         return "guarantee 检查失败"
     if "fatal error: controlled crash requested" in text:
         return "WhiteBox 主动调用 fatal"
     return None
+
+
+def _inferred_cause(
+    assert_match: re.Match[str] | None,
+    signal: str | None,
+    fault_address: str | None,
+    segv_code: str | None,
+    frame_symbol: str | None,
+) -> str | None:
+    """Best-effort direct cause for a real-world (non-controlled) log.
+
+    Every clause is grounded in text that is present in the log: the assert
+    message, the siginfo si_addr/si_code, and the problematic frame symbol.
+    """
+    if assert_match:
+        kind = assert_match.group("kind")
+        expression = assert_match.group("expr").strip()
+        message = assert_match.group("msg").strip()
+        return f"断言失败: {kind}({expression}) failed: {message}"
+    if signal == "SIGSEGV":
+        address = int(fault_address, 16) if fault_address else None
+        if address == 0:
+            cause = f"空指针解引用 (si_addr={fault_address})"
+        elif address is not None and address < 0x10000:
+            cause = f"低地址解引用，疑似空指针加字段偏移 (si_addr={fault_address})"
+        elif segv_code == "SEGV_MAPERR":
+            cause = "访问未映射地址 (SEGV_MAPERR)"
+        elif segv_code == "SEGV_ACCERR":
+            cause = "访问权限冲突 (SEGV_ACCERR)"
+        else:
+            cause = "非法地址访问 (SIGSEGV)"
+        if frame_symbol:
+            cause += f"，崩溃点 {frame_symbol}"
+        return cause
+    if signal == "SIGFPE":
+        return "整数运算错误导致 SIGFPE"
+    if signal:
+        return f"{signal} 信号崩溃"
+    return None
+
+
+def _subsystem_hints(*texts: str | None) -> list[str]:
+    text = " ".join(part for part in texts if part).lower()
+    hints: list[str] = []
+    if "jvmti" in text:
+        hints.append("jvmti")
+    if any(word in text for word in ("c2", "compile", "matcher", "opto")):
+        hints.append("c2-compiler")
+    if any(word in text for word in (" gc", "zgc", "zheap", "g1 gc", "shenandoah")):
+        hints.append("gc")
+    return hints
+
+
+def _jbs_search(
+    frame_symbol: str | None,
+    assert_message: str | None,
+    signal: str | None,
+    thread_name: str | None,
+    java_vm: str | None,
+) -> dict[str, object] | None:
+    """Propose search keywords for the Java Bug System (best effort)."""
+    keywords: list[str] = []
+    if frame_symbol:
+        keywords.append(frame_symbol)
+    if assert_message:
+        keywords.append(assert_message)
+    if signal:
+        keywords.append(signal)
+    if not keywords:
+        return None
+    # assert_message is the most distinctive for an assert crash; otherwise
+    # the problematic frame symbol; otherwise the signal name.
+    primary = assert_message or frame_symbol or signal
+    jql = f'text ~ "{primary}"'
+    return {
+        "keywords": keywords,
+        "subsystems": _subsystem_hints(frame_symbol, thread_name, java_vm) or None,
+        "url": JBS_SEARCH_URL + quote(jql),
+    }
 
 
 def _redact_source(path: str | None) -> str | None:
@@ -117,10 +234,11 @@ def parse_log(path: str | Path) -> dict[str, object]:
     thread_match = _first_match(lines, CURRENT_THREAD_RE)
     operation_match = _first_match(lines, VM_OPERATION_RE)
     siginfo_match = _first_match(lines, SIGINFO_RE)
+    assert_match = _first_match(lines, ASSERT_RE)
 
     problematic_frame: str | None = None
     for index, line in enumerate(lines):
-        if line.strip() == "# Problematic frame:":
+        if PROBLEMATIC_FRAME_HEADER_RE.match(line):
             for candidate in lines[index + 1 :]:
                 candidate = _without_log_prefix(candidate).strip()
                 if candidate:
@@ -143,6 +261,20 @@ def parse_log(path: str | Path) -> dict[str, object]:
 
     signal = signal_match.group("signal") if signal_match else None
     signal_number = signal_match.group("number") if signal_match else None
+    siginfo_value = siginfo_match.group("value") if siginfo_match else None
+    fault_address_match = FAULT_ADDRESS_RE.search(siginfo_value) if siginfo_value else None
+    fault_address = fault_address_match.group("addr") if fault_address_match else None
+    segv_code_match = SEGV_CODE_RE.search(siginfo_value) if siginfo_value else None
+    segv_code = segv_code_match.group("code") if segv_code_match else None
+    frame_symbol_match = FRAME_SYMBOL_RE.match(problematic_frame) if problematic_frame else None
+    frame_symbol = _group(frame_symbol_match, "symbol")
+    assert_message = _group(assert_match, "msg")
+    crash_type = (
+        int(type_match.group("type")) if type_match else (
+            int(file_type_match.group("type")) if file_type_match else None
+        )
+    )
+
     native_sections = _native_sections(lines)
     all_native_frames = max(
         native_sections,
@@ -151,30 +283,37 @@ def parse_log(path: str | Path) -> dict[str, object]:
     )
     native_frames, error_reporting_frames = _split_reporting_frames(all_native_frames)
 
+    thread_name = _group(thread_match, "name")
+    java_vm = _group(_first_match(lines, JAVA_VM_RE), "value")
+
+    if crash_type is not None:
+        direct_cause = _controlled_cause(lines, signal, error_kind)
+    else:
+        direct_cause = _inferred_cause(assert_match, signal, fault_address, segv_code, frame_symbol)
+    jbs_search = (
+        _jbs_search(frame_symbol, assert_message, signal, thread_name, java_vm)
+        if crash_type is None
+        else None
+    )
+
     result: dict[str, object] = {
         "file": path.name,
-        "crash_type": int(type_match.group("type")) if type_match else (
-            int(file_type_match.group("type")) if file_type_match else None
-        ),
+        "crash_type": crash_type,
         "error_kind": error_kind,
         "signal": signal,
         "signal_number": signal_number,
-        "siginfo": siginfo_match.group("value") if siginfo_match else None,
+        "siginfo": siginfo_value,
+        "fault_address": fault_address,
         "source_file": _redact_source(source_file),
         "source_line": source_line,
         "pid": pid,
         "tid": tid,
-        "jre_version": _redact_runtime_text(next(
-            (_without_log_prefix(line)[len("JRE version: ") :] for line in lines if line.startswith("# JRE version: ")),
-            None,
-        )),
-        "java_vm": _redact_runtime_text(next(
-            (_without_log_prefix(line)[len("Java VM: ") :] for line in lines if line.startswith("# Java VM: ")),
-            None,
-        )),
+        "jre_version": _redact_runtime_text(_group(_first_match(lines, JRE_VERSION_RE), "value")),
+        "java_vm": _redact_runtime_text(java_vm),
         "current_thread": {
-            "name": thread_match.group("name") if thread_match else None,
+            "name": thread_name,
             "id": int(thread_match.group("id")) if thread_match else None,
+            "state": _group(thread_match, "state"),
         },
         "problematic_frame": problematic_frame,
         "vm_operation": {
@@ -186,7 +325,9 @@ def parse_log(path: str | Path) -> dict[str, object]:
         "source_line_meaning": (
             "line reported by the HotSpot error header; for signal logs the header has no source line"
         ),
-        "direct_cause": _direct_cause(lines, signal, error_kind),
+        "assert_message": assert_message,
+        "direct_cause": direct_cause,
+        "jbs_search": jbs_search,
     }
     return result
 
