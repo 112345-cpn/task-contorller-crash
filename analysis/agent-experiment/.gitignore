@@ -1,0 +1,4 @@
+# 个人交付物留在本地，不进仓库（PDF 用于发导师邮件，HTML 是排版中间产物）
+*.pdf
+report.html
+email-draft.md

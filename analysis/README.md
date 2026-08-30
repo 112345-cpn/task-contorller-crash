@@ -6,6 +6,8 @@
 
 用 JBS 真实崩溃日志（别人的日志，非自制样本）验证“解析 → 直接原因 → 关联已知问题 → 建议”全链路的实践见 `jbs-analysis.md`。
 
+将 Agent Skill 与 MCP server 实际安装进 AI Agent（WorkBuddy/CodeBuddy 系）并分析 hs_err 日志的完整实验过程见 `agent-experiment/REPORT.md`。
+
 运行单个文件：
 
 ```bash

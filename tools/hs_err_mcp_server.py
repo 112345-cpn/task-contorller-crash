@@ -172,7 +172,11 @@ def _render_report(result: dict[str, Any], candidates: list[dict[str, Any]] | No
     if result.get("assert_message"):
         lines.append(f"- 断言消息：`{result['assert_message']}`")
     if result.get("fault_address") is not None:
-        lines.append(f"- 故障地址：`0x{result['fault_address']:x}`")
+        fa = result["fault_address"]
+        if isinstance(fa, int):
+            lines.append(f"- 故障地址：`0x{fa:x}`")
+        else:
+            lines.append(f"- 故障地址：`{fa}`")
     if result.get("segv_code"):
         lines.append(f"- SEGV 码：{result['segv_code']}")
     if operation.get("name"):
