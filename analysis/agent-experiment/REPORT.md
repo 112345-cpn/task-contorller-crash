@@ -221,8 +221,10 @@ MCP 三工具全部验证通过：`parse_hs_err` 解析、`search_jbs` 版本约
 - **问题**：`analyze_hs_err.py --report` 渲染"故障地址"时用整数格式化
   （`f"0x{result['fault_address']:x}"`），而解析器输出的 `fault_address` 是字符串
   （如 `"0x0000000000000000"`），导致报告生成直接 `ValueError` 崩溃。
-- **修复**：兼容字符串与整数两种类型；已同步修复三处副本（用户级安装副本、仓库
-  `skills/` 副本，`tools/` 主解析器不受影响）。
+- **修复**：兼容字符串与整数两种类型；同源代码共多处，已全部同步修复（用户级安装
+  副本、仓库 `skills/` 副本，以及 `tools/hs_err_mcp_server.py` 中 `analyze_hs_err`
+  工具的同一处格式化；`tools/parse_hs_err.py` 主解析器本身无此逻辑、不受影响）。
+  修复后 MCP 端到端测试重跑全绿。
 
 ## 6. 结论
 
