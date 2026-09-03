@@ -32,10 +32,14 @@
 - 两处 `parse_hs_err.py` 保持同步：**改动以 `tools/` 版本为准（CI 验证），改完覆盖
   skill 的 `scripts/` 副本**。
 
+## 环境要求
+
+**Python >= 3.10**（解析器使用了 `X | None` 联合类型注解等 3.10+ 语法，`mcp` 2.x 依赖也要求 3.10+；用旧版解释器会直接报语法错误）。
+
 ## 安装依赖
 
 ```bash
-pip install "mcp>=2.0"
+python3.10 -m pip install "mcp>=2.0"
 ```
 
 本项目使用 mcp 2.x（`mcp.server.mcpserver.MCPServer` 接口；1.x 的 FastMCP 接口不兼容）。
@@ -43,7 +47,7 @@ pip install "mcp>=2.0"
 ## 运行
 
 ```bash
-python tools/hs_err_mcp_server.py
+python3.10 tools/hs_err_mcp_server.py
 ```
 
 默认使用 stdio 传输（MCP server 标准方式），由客户端拉起，无需手动运行。
@@ -66,16 +70,20 @@ python tools/hs_err_mcp_server.py
 **Claude Code**（`claude mcp add`）：
 
 ```bash
-claude mcp add hs-err-jbs-analyzer -- python tools/hs_err_mcp_server.py
+claude mcp add hs-err-jbs-analyzer -- python3.10 tools/hs_err_mcp_server.py
 ```
 
 ## 自测
 
 ```bash
-python tools/test_mcp_server_e2e.py
+python3.10 tools/test_mcp_server_e2e.py
 ```
 
-端到端测试会用 stdio 协议真实拉起 server，验证三个工具：
-解析 `jdk-8314225.log` 得到正确直接原因、`search_jbs` 版本约束检索命中
+端到端测试会用 stdio 协议真实拉起 server（复用当前解释器，无需配置路径），
+样本日志取自仓库内 `skills/hs-err-jbs-analyzer/examples/`，可在任意平台直接运行。
+验证三个工具：解析 `jdk-8314225.log` 得到正确直接原因、`search_jbs` 版本约束检索命中
 JDK-8314225、`analyze_hs_err` 对 `jdk-8312741.log` 生成含 JDK-8312741 候选与
 修复版本建议的报告。
+
+复现记录：2026-09-03 在 Windows 上以仓库内相对路径 + `sys.executable` 方式重跑，
+三工具全部通过（`ALL E2E TOOLS OK`）。

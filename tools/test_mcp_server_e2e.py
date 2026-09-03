@@ -9,8 +9,9 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 TOOLS_DIR = Path(__file__).resolve().parent
-PYTHON = r"C:/Users/lenovo/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
-SAMPLES = Path(r"C:/Users/lenovo/AppData/Local/Temp/jbs-test")
+# 跨平台：直接复用当前解释器（需已安装 mcp>=2.0），样本日志取仓库内相对路径。
+PYTHON = sys.executable
+SAMPLES = TOOLS_DIR.parent / "skills" / "hs-err-jbs-analyzer" / "examples"
 
 
 def text_of(result) -> str:

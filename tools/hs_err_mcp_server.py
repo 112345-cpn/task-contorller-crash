@@ -10,18 +10,18 @@ any MCP client (WorkBuddy, Claude Code, ...) can call it directly:
 
 Transport: stdio (default for MCP servers). Run with:
 
-  python tools/hs_err_mcp_server.py
+  python3.10 tools/hs_err_mcp_server.py
 
-The server depends on parse_hs_err.py in the same directory. Requires the
-`mcp` Python package (pip install mcp).
+The server depends on parse_hs_err.py in the same directory. Requires
+Python >= 3.10 and the `mcp` Python package (pip install "mcp>=2.0").
 
 Example client config (e.g. WorkBuddy ~/.workbuddy/mcp.json):
 
   {
     "mcpServers": {
       "hs-err-jbs-analyzer": {
-        "command": "C:/Users/lenovo/.workbuddy/binaries/python/envs/default/Scripts/python.exe",
-        "args": ["C:/.../task-controlled-crash/tools/hs_err_mcp_server.py"]
+        "command": "<path to a Python >= 3.10 with mcp installed>",
+        "args": ["<repo>/task-controlled-crash/tools/hs_err_mcp_server.py"]
       }
     }
   }

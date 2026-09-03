@@ -68,13 +68,17 @@ WhiteBox.getWhiteBox().controlledCrash(type);
 
 ## 仓库内容
 
+工具链（`tools/`、`skills/`、`docs/MCP.md`）要求 **Python >= 3.10**：解析器使用了
+`X | None` 联合类型等 3.10+ 语法，`mcp` 2.x 依赖也要求 3.10+，旧版解释器会直接报
+语法错误。建议用 `python3.10` 及以上版本运行。
+
 - `PLAN.md`：任务安排。
 - `REPORT.md`：目前的实现和构建记录。
 - `docs/BUILD.md`：release 和 fastdebug 构建命令。
 - `tools/parse_hs_err.py`：HotSpot Error Log 字段解析器（工具本体，CI 与 MCP server 均依赖）。
 - `tools/test_parse_hs_err.py`：解析器单元测试。
 - `tools/hs_err_mcp_server.py`：MCP server（解析 / JBS 检索 / 完整分析三工具）。
-- `tools/test_mcp_server_e2e.py`：MCP server 端到端自测（stdio 协议拉起真实服务）。
+- `tools/test_mcp_server_e2e.py`：MCP server 端到端自测（stdio 协议拉起真实服务，跨平台：复用当前解释器、样本取仓库内相对路径）。
 - `docs/MCP.md`：MCP server 安装、配置与使用说明。
 - `skills/`：Agent Skill `hs-err-jbs-analyzer`（解析→原因→JBS 关联→建议的工作流封装，AI 便携版）。
 - `analysis/`：去环境化解析结果、初步分析报告和 JBS 真实日志实践。
